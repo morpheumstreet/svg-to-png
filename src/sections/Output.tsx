@@ -8,35 +8,53 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "@/components/Button";
 import { Canvas } from "@/sections/Canvas";
-import { editAll, images, setImage } from "@/state";
+import { editAll, iconSetSizes, images, setImage } from "@/state";
 import { downloadPng, downloadPngs, downloadZip } from "@/util/download";
 import classes from "./Output.module.css";
 
 const Output = () => {
   const [getImages] = useAtom(images);
   const [getEditAll] = useAtom(editAll);
+  const [getIconSetSizes] = useAtom(iconSetSizes);
 
   if (!getImages.length) return <></>;
+
+  /** build flat list of outputs for download index lookup */
+  const outputItems = getImages.flatMap((image, index) =>
+    image.iconSet
+      ? getIconSetSizes.map((size) => ({
+          image,
+          index,
+          size: size as number | null,
+          name: `${image.name}-${size}`,
+        }))
+      : [{ image, index, size: null as number | null, name: image.name }],
+  );
 
   return (
     <section>
       <h2>Output</h2>
 
       <div className={classes.grid}>
-        {getImages.map((image, index) => (
+        {outputItems.map(({ image, index, size, name }, i) => (
           <div
-            key={index}
+            key={size ? `${index}-${size}` : index}
             className={classes.cell}
             role="group"
-            aria-label={image.name + ".png"}
+            aria-label={name + ".png"}
           >
-            <div className={classes.name}>{image.name}.png</div>
+            <div className={classes.name}>{name}.png</div>
 
-            <Canvas {...image} tooltip="PNG preview" />
+            <Canvas
+              {...image}
+              tooltip="PNG preview"
+              overrideSize={size ?? undefined}
+              canvasTitle={name}
+            />
 
             <div className={classes.actions}>
               <Button
-                onClick={() => downloadPng(getPngs()[index])}
+                onClick={() => downloadPng(getPngs()[i])}
                 data-tooltip="Download this PNG"
                 data-square
               >

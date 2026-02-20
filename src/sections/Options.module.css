@@ -33,3 +33,104 @@
   justify-content: center;
   gap: 10px;
 }
+
+.iconSetSizes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  width: 100%;
+}
+
+.iconSetSizesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.iconSetSizeItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    overflow-x: visible;
+  }
+
+  .wrapper table {
+    display: grid;
+    gap: 16px;
+  }
+
+  .wrapper thead {
+    display: none;
+  }
+
+  .wrapper tbody {
+    display: contents;
+  }
+
+  .wrapper tr {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 16px;
+    background: var(--off-white);
+    border-radius: var(--rounded);
+  }
+
+  .wrapper td {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    text-align: left;
+    gap: 6px;
+  }
+
+  .wrapper td::before {
+    font-weight: 600;
+    font-size: 0.85em;
+  }
+
+  .wrapper td:nth-child(1)::before { content: "Reset"; }
+  .wrapper td:nth-child(2)::before { content: "Image"; }
+  .wrapper td:nth-child(3)::before { content: "Size"; }
+  .wrapper td:nth-child(4)::before { content: "Aspect"; }
+  .wrapper td:nth-child(5)::before { content: "Trim"; }
+  .wrapper td:nth-child(6)::before { content: "Icon-set"; }
+  .wrapper td:nth-child(7)::before { content: "Margin"; }
+  .wrapper td:nth-child(8)::before { content: "Fit"; }
+  .wrapper td:nth-child(9)::before { content: "Background"; }
+  .wrapper td:nth-child(10)::before { content: "Color"; }
+
+  .wrapper td:nth-child(1),
+  .wrapper td:nth-child(4) {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .wrapper td:nth-child(1)::before,
+  .wrapper td:nth-child(4)::before {
+    margin-right: auto;
+  }
+
+  .name {
+    grid-column: 1 / -1;
+    max-width: none;
+  }
+
+  .wrapper td:nth-child(3),
+  .wrapper td:nth-child(9),
+  .wrapper td:nth-child(10) {
+    grid-column: 1 / -1;
+  }
+
+  .cell {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}

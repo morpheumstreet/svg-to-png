@@ -153,6 +153,7 @@ export const getDefaultOptions = (props?: Props) => {
     background: "",
     color: "",
     darkCheckers: false,
+    iconSet: false,
   };
 };
 
@@ -168,3 +169,21 @@ images.onMount = () => {
 
 /** flag to edit all images together */
 export const editAll = atomWithStorage("edit-all", false);
+
+/** available icon-set sizes */
+export const ICON_SET_SIZES = [16, 32, 48, 64, 96, 128, 256, 512] as const;
+
+/** selected icon-set sizes (when icon-set mode is on) */
+export const iconSetSizes = atomWithStorage<number[]>(
+  "icon-set-sizes",
+  [...ICON_SET_SIZES],
+);
+
+/** toggle a size in icon-set selection */
+export const toggleIconSetSize = (size: number) => {
+  const current = store.get(iconSetSizes);
+  const next = current.includes(size)
+    ? current.filter((s) => s !== size)
+    : [...current, size].sort((a, b) => a - b);
+  store.set(iconSetSizes, next);
+};

@@ -10,6 +10,7 @@ import {
   faLinkSlash,
   faPaintBrush,
   faRefresh,
+  faSquare,
   faUpRightAndDownLeftFromCenter,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,7 +20,15 @@ import Numberbox from "@/components/Numberbox";
 import Select from "@/components/Select";
 import Textbox from "@/components/Textbox";
 import { cleanLabel } from "@/components/tooltip";
-import { editAll, images, resetOptions, setImage } from "@/state";
+import {
+  editAll,
+  ICON_SET_SIZES,
+  iconSetSizes,
+  images,
+  resetOptions,
+  setImage,
+  toggleIconSetSize,
+} from "@/state";
 import classes from "./Options.module.css";
 
 /** tooltips/aria labels for options */
@@ -46,10 +55,13 @@ const colorLabel = `
     Prefix with a <code>~</code> to only set <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#currentcolor_keyword" target="_blank"><code>currentColor</code></a> values.
   </p>
 `;
+const iconSetLabel =
+  "Square viewport with content fitted using contain (centered).";
 
 const Options = () => {
   const [getImages] = useAtom(images);
   const [getEditAll, setEditAll] = useAtom(editAll);
+  const [getIconSetSizes] = useAtom(iconSetSizes);
 
   if (!getImages.length) return <></>;
 
@@ -74,6 +86,10 @@ const Options = () => {
               <th data-tooltip={trimLabel}>
                 <FontAwesomeIcon icon={faCropSimple} />
                 <span>Trim</span>
+              </th>
+              <th data-tooltip={iconSetLabel}>
+                <FontAwesomeIcon icon={faSquare} />
+                <span>Icon-set</span>
               </th>
               <th data-tooltip={marginLabel}>
                 <FontAwesomeIcon icon={faCompress} />
@@ -169,6 +185,16 @@ const Options = () => {
                 </td>
 
                 <td>
+                  <Checkbox
+                    value={image.iconSet}
+                    onChange={(value) =>
+                      setImage(getEditAll ? -1 : index, "iconSet", value)
+                    }
+                    aria-label={"Icon-set. " + iconSetLabel}
+                  />
+                </td>
+
+                <td>
                   <Numberbox
                     min={-1000}
                     max={1000}
@@ -230,6 +256,24 @@ const Options = () => {
           onChange={setEditAll}
         />
       </div>
+
+      {getImages.some((img) => img.iconSet) && (
+        <div className={classes.iconSetSizes}>
+          <span>Icon-set sizes:</span>
+          <div className={classes.iconSetSizesList}>
+            {ICON_SET_SIZES.map((size) => (
+              <label key={size} className={classes.iconSetSizeItem}>
+                <input
+                  type="checkbox"
+                  checked={getIconSetSizes.includes(size)}
+                  onChange={() => toggleIconSetSize(size)}
+                />
+                <span>{size}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 };

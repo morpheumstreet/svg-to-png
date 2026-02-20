@@ -7,6 +7,10 @@ export const densityScale = window.devicePixelRatio;
 
 type Props = Image & {
   tooltip: string;
+  /** override size for icon-set mode (square) */
+  overrideSize?: number;
+  /** override canvas title (used for download filename) */
+  canvasTitle?: string;
 };
 
 /** draw svg image to canvas */
@@ -22,9 +26,18 @@ export const Canvas = ({
   background,
   color,
   darkCheckers,
+  iconSet,
   tooltip,
+  overrideSize,
+  canvasTitle,
 }: Props) => {
   const filter = getFilterId();
+
+  /** when icon-set: square viewport, contain fit; overrideSize takes precedence */
+  const effWidth = overrideSize ?? (iconSet ? Math.max(width, height) : width);
+  const effHeight =
+    overrideSize ?? (iconSet ? Math.max(width, height) : height);
+  const effFit = iconSet || overrideSize ? "contain" : fit;
 
   /** whether to use canvas svg method for color filter */
   const canvasFilter = color && !color.startsWith("~") && !isSafari;
@@ -54,8 +67,8 @@ export const Canvas = ({
     const target = {
       x: 0,
       y: 0,
-      width: clamp(Math.abs(width) - margin * 2, 0, Infinity),
-      height: clamp(Math.abs(height) - margin * 2, 0, Infinity),
+      width: clamp(Math.abs(effWidth) - margin * 2, 0, Infinity),
+      height: clamp(Math.abs(effHeight) - margin * 2, 0, Infinity),
     };
 
     /** calc aspect ratios */
@@ -63,30 +76,30 @@ export const Canvas = ({
     const targetAspect = target.width / target.height;
 
     /** scale down target size to contain full image within bounds of canvas */
-    if (fit === "contain") {
+    if (effFit === "contain") {
       if (sourceAspect < targetAspect)
         target.width = target.height * sourceAspect;
       else target.height = target.width / sourceAspect;
     }
 
     /** scale up target size to cover full canvas with image */
-    if (fit === "cover") {
+    if (effFit === "cover") {
       if (sourceAspect > targetAspect)
         target.width = target.height * sourceAspect;
       else target.height = target.width / sourceAspect;
     }
 
     /** center within canvas */
-    target.x = (width - target.width) / 2;
-    target.y = (height - target.height) / 2;
+    target.x = (effWidth - target.width) / 2;
+    target.y = (effHeight - target.height) / 2;
 
     /** clear existing contents */
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, effWidth, effHeight);
 
     /** fill background */
     ctx.filter = "none";
     ctx.fillStyle = background.trim() || "transparent";
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, effWidth, effHeight);
 
     /** apply color tint with canvas svg filter (doesn't work in safari) */
     if (canvasFilter) ctx.filter = `url(#${filter})`;
@@ -114,13 +127,13 @@ export const Canvas = ({
       >
         <canvas
           ref={drawCanvas}
-          width={width}
-          height={height}
+          width={effWidth}
+          height={effHeight}
           style={{
-            width: width / densityScale + "px",
-            height: height / densityScale + "px",
+            width: effWidth / densityScale + "px",
+            height: effHeight / densityScale + "px",
           }}
-          title={name}
+          title={canvasTitle ?? name}
         />
       </div>
     </>
