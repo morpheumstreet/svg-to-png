@@ -187,3 +187,9 @@ export const toggleIconSetSize = (size: number) => {
     : [...current, size].sort((a, b) => a - b);
   store.set(iconSetSizes, next);
 };
+
+/** platform-specific icon-set outputs (when icon-set mode is on) */
+export const iconSetAndroid = atomWithStorage("icon-set-android", false);
+export const iconSetWindows = atomWithStorage("icon-set-windows", false);
+export const iconSetMacos = atomWithStorage("icon-set-macos", false);
+export const iconSetIos = atomWithStorage("icon-set-ios", false);

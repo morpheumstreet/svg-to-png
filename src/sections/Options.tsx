@@ -23,7 +23,11 @@ import { cleanLabel } from "@/components/tooltip";
 import {
   editAll,
   ICON_SET_SIZES,
+  iconSetAndroid,
+  iconSetIos,
+  iconSetMacos,
   iconSetSizes,
+  iconSetWindows,
   images,
   resetOptions,
   setImage,
@@ -62,6 +66,10 @@ const Options = () => {
   const [getImages] = useAtom(images);
   const [getEditAll, setEditAll] = useAtom(editAll);
   const [getIconSetSizes] = useAtom(iconSetSizes);
+  const [getIconSetAndroid, setIconSetAndroid] = useAtom(iconSetAndroid);
+  const [getIconSetWindows, setIconSetWindows] = useAtom(iconSetWindows);
+  const [getIconSetMacos, setIconSetMacos] = useAtom(iconSetMacos);
+  const [getIconSetIos, setIconSetIos] = useAtom(iconSetIos);
 
   if (!getImages.length) return <></>;
 
@@ -258,21 +266,60 @@ const Options = () => {
       </div>
 
       {getImages.some((img) => img.iconSet) && (
-        <div className={classes.iconSetSizes}>
-          <span>Icon-set sizes:</span>
-          <div className={classes.iconSetSizesList}>
-            {ICON_SET_SIZES.map((size) => (
-              <label key={size} className={classes.iconSetSizeItem}>
+        <>
+          <div className={classes.iconSetSizes}>
+            <span>Icon-set sizes:</span>
+            <div className={classes.iconSetSizesList}>
+              {ICON_SET_SIZES.map((size) => (
+                <label key={size} className={classes.iconSetSizeItem}>
+                  <input
+                    type="checkbox"
+                    checked={getIconSetSizes.includes(size)}
+                    onChange={() => toggleIconSetSize(size)}
+                  />
+                  <span>{size}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className={classes.iconSetSizes}>
+            <span>Platform outputs:</span>
+            <div className={classes.iconSetSizesList}>
+              <label className={classes.iconSetSizeItem}>
                 <input
                   type="checkbox"
-                  checked={getIconSetSizes.includes(size)}
-                  onChange={() => toggleIconSetSize(size)}
+                  checked={getIconSetAndroid}
+                  onChange={(e) => setIconSetAndroid(e.target.checked)}
                 />
-                <span>{size}</span>
+                <span>Android-set</span>
               </label>
-            ))}
+              <label className={classes.iconSetSizeItem}>
+                <input
+                  type="checkbox"
+                  checked={getIconSetWindows}
+                  onChange={(e) => setIconSetWindows(e.target.checked)}
+                />
+                <span>Windows-set</span>
+              </label>
+              <label className={classes.iconSetSizeItem}>
+                <input
+                  type="checkbox"
+                  checked={getIconSetMacos}
+                  onChange={(e) => setIconSetMacos(e.target.checked)}
+                />
+                <span>macOS-set</span>
+              </label>
+              <label className={classes.iconSetSizeItem}>
+                <input
+                  type="checkbox"
+                  checked={getIconSetIos}
+                  onChange={(e) => setIconSetIos(e.target.checked)}
+                />
+                <span>iOS-set</span>
+              </label>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </section>
   );

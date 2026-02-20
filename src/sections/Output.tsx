@@ -8,7 +8,16 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "@/components/Button";
 import { Canvas } from "@/sections/Canvas";
-import { editAll, iconSetSizes, images, setImage } from "@/state";
+import {
+  editAll,
+  iconSetAndroid,
+  iconSetIos,
+  iconSetMacos,
+  iconSetSizes,
+  iconSetWindows,
+  images,
+  setImage,
+} from "@/state";
 import { downloadPng, downloadPngs, downloadZip } from "@/util/download";
 import classes from "./Output.module.css";
 
@@ -16,6 +25,10 @@ const Output = () => {
   const [getImages] = useAtom(images);
   const [getEditAll] = useAtom(editAll);
   const [getIconSetSizes] = useAtom(iconSetSizes);
+  const [getIconSetAndroid] = useAtom(iconSetAndroid);
+  const [getIconSetWindows] = useAtom(iconSetWindows);
+  const [getIconSetMacos] = useAtom(iconSetMacos);
+  const [getIconSetIos] = useAtom(iconSetIos);
 
   if (!getImages.length) return <></>;
 
@@ -90,7 +103,20 @@ const Output = () => {
         </Button>
 
         <Button
-          onClick={() => downloadZip(getPngs())}
+          onClick={() =>
+            downloadZip(getPngs(), {
+              iconSetMode: getImages.some((img) => img.iconSet),
+              platforms: {
+                android: getIconSetAndroid,
+                windows: getIconSetWindows,
+                macos: getIconSetMacos,
+                ios: getIconSetIos,
+              },
+              outputItems: getImages.some((img) => img.iconSet)
+                ? outputItems
+                : undefined,
+            })
+          }
           data-tooltip="Zip PNGs together into single download."
         >
           Download Zip
